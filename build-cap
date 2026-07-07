@@ -24,10 +24,33 @@ build_capacitor_ios() {
 		BUILD_LIBRARY_FOR_DISTRIBUTION=YES
 }
 
+create_cordova_scheme() {
+	mkdir -p ../CapacitorCordova/CapacitorCordova.xcodeproj/xcshareddata/xcschemes
+	cat <<'SCHEME' > ../CapacitorCordova/CapacitorCordova.xcodeproj/xcshareddata/xcschemes/Cordova.xcscheme
+<?xml version="1.0" encoding="UTF-8"?>
+<Scheme LastUpgradeVersion="1500" version="1.7">
+   <BuildAction parallelizeBuildables="YES" buildImplicitDependencies="YES">
+      <BuildActionEntries>
+         <BuildActionEntry buildForArchiving="YES">
+            <BuildableReference
+               BuildableIdentifier="primary"
+               BlueprintIdentifier="2F5C86DB1FE94845004B09C7"
+               BuildableName="Cordova.framework"
+               BlueprintName="Cordova"
+               ReferencedContainer="container:CapacitorCordova.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+      </BuildActionEntries>
+   </BuildAction>
+   <ArchiveAction buildConfiguration="Release" revealArchiveInOrganizer="YES"/>
+</Scheme>
+SCHEME
+}
+
 build_cordova_simulator() {
 	xcodebuild archive \
+		-scheme Cordova \
 		-project ../CapacitorCordova/CapacitorCordova.xcodeproj \
-		-target Cordova \
 		-destination "generic/platform=iOS Simulator" \
 		-configuration Debug \
 		-archivePath ./Build/iOS-Simulator-Cordova \
@@ -38,8 +61,8 @@ build_cordova_simulator() {
 
 build_cordova_ios() {
 	xcodebuild archive \
+		-scheme Cordova \
 		-project ../CapacitorCordova/CapacitorCordova.xcodeproj \
-		-target Cordova \
 		-destination "generic/platform=iOS" \
 		-archivePath ./Build/iOS-Cordova \
 		SKIP_INSTALL=NO \
@@ -79,6 +102,7 @@ git clone https://github.com/ionic-team/capacitor capacitor-checkout
 cd capacitor-checkout/ios/Capacitor
 git checkout $CAPACITOR_REF
 
+create_cordova_scheme
 create_xcframeworks
 
 mv Capacitor.xcframework ../../../
