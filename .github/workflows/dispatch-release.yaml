@@ -11,6 +11,10 @@ on:
         description: "Create a Draft Release or Immediately Release"
         type: string
         default: " "
+      capacitor-ref:
+        description: "Git ref (branch or tag) to check out in the capacitor repo. Leave empty to use release-version as the tag."
+        type: string
+        default: ""
 
 jobs:
   create-release:
@@ -18,4 +22,5 @@ jobs:
     with:
       release-version: ${{ inputs.release-version }}
       draft-flag: ${{ inputs.draft-flag }}
+      capacitor-ref: ${{ inputs.capacitor-ref }}
     secrets: inherit

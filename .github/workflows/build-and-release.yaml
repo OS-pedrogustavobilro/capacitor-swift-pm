@@ -9,14 +9,22 @@ on:
       draft-flag:
         type: string
         default: " "
+      capacitor-ref:
+        type: string
+        default: ""
+        description: "Git ref (branch or tag) to check out in the capacitor repo. Defaults to release-version."
     secrets:
       XCFRAMEWORK_SIGNING_TOKEN:
-        required: true
+        required: false
 
 jobs:
   build:
     runs-on: macos-latest
     timeout-minutes: 30
+    permissions:
+      contents: write
+    env:
+      XCFRAMEWORK_SIGNING_TOKEN: ${{ secrets.XCFRAMEWORK_SIGNING_TOKEN }}
     steps:
       - run: |
           if [[ "${{ inputs.release-version }}" =~ ^7\. ]]; then
@@ -28,13 +36,15 @@ jobs:
       - name: Install dependencies
         run: brew install ghr
       - name: Build Capacitor and Cordova
-        run: ./build-cap ${{ inputs.release-version }}
+        run: ./build-cap ${{ inputs.release-version }} ${{ inputs.capacitor-ref }}
       - name: Sign Capacitor xcframework
+        if: env.XCFRAMEWORK_SIGNING_TOKEN != ''
         uses: ionic-team/sign-xcframework@main
         with:
           cert-token: ${{ secrets.XCFRAMEWORK_SIGNING_TOKEN }}
           xcframework-path: Capacitor.xcframework
       - name: Sign Cordova xcframework
+        if: env.XCFRAMEWORK_SIGNING_TOKEN != ''
         uses: ionic-team/sign-xcframework@main
         with:
           cert-token: ${{ secrets.XCFRAMEWORK_SIGNING_TOKEN }}

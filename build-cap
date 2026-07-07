@@ -47,9 +47,11 @@ create_xcframeworks() {
 
 }
 
+CAPACITOR_REF="${2:-$1}"
+
 git clone https://github.com/ionic-team/capacitor capacitor-checkout
 cd capacitor-checkout/ios/Capacitor
-git checkout $1
+git checkout $CAPACITOR_REF
 
 create_xcframeworks
 
