@@ -24,35 +24,9 @@ build_capacitor_ios() {
 		BUILD_LIBRARY_FOR_DISTRIBUTION=YES
 }
 
-build_cordova_simulator() {
-	xcodebuild archive \
-		-project ../CapacitorCordova/CapacitorCordova.xcodeproj \
-		-target Cordova \
-		-destination "generic/platform=iOS Simulator" \
-		-configuration Debug \
-		-archivePath ./Build/iOS-Simulator-Cordova \
-		SKIP_INSTALL=NO \
-		BUILD_LIBRARY_FOR_DISTRIBUTION=YES \
-		DEBUG_INFORMATION_FORMAT="dwarf-with-dsym"
-}
-
-build_cordova_ios() {
-	xcodebuild archive \
-		-project ../CapacitorCordova/CapacitorCordova.xcodeproj \
-		-target Cordova \
-		-destination "generic/platform=iOS" \
-		-archivePath ./Build/iOS-Cordova \
-		SKIP_INSTALL=NO \
-		SWIFT_SERIALIZE_DEBUGGING_OPTIONS=NO \
-		DEBUG_INFORMATION_FORMAT="dwarf-with-dsym" \
-		BUILD_LIBRARY_FOR_DISTRIBUTION=YES
-}
-
 create_xcframeworks() {
 	build_capacitor_simulator
 	build_capacitor_ios
-	build_cordova_simulator
-	build_cordova_ios
 
 	rm -rf ./Build/iOS-Simulator.xcarchive/Products/Library/Frameworks/Capacitor.framework/Frameworks
 	rm -rf ./Build/iOS.xcarchive/Products/Library/Frameworks/Capacitor.framework/Frameworks
@@ -65,10 +39,10 @@ create_xcframeworks() {
 		-output Capacitor.xcframework
 
 	xcodebuild -create-xcframework \
-		-framework ./Build/iOS-Simulator-Cordova.xcarchive/Products/Library/Frameworks/Cordova.framework \
-		-debug-symbols $PWD/Build/iOS-Simulator-Cordova.xcarchive/dSYMs/Cordova.framework.dSYM \
-		-framework ./Build/iOS-Cordova.xcarchive/Products/Library/Frameworks/Cordova.framework \
-		-debug-symbols $PWD/Build/iOS-Cordova.xcarchive/dSYMs/Cordova.framework.dSYM \
+		-framework ./Build/iOS-Simulator.xcarchive/Products/Library/Frameworks/Cordova.framework \
+		-debug-symbols $PWD/Build/iOS-Simulator.xcarchive/dSYMs/Cordova.framework.dSYM \
+		-framework ./Build/iOS.xcarchive/Products/Library/Frameworks/Cordova.framework \
+		-debug-symbols $PWD/Build/iOS.xcarchive/dSYMs/Cordova.framework.dSYM \
 		-output Cordova.xcframework
 
 }
