@@ -58,4 +58,9 @@ jobs:
       - name: Push manifest update
         uses: EndBug/add-and-commit@v9
       - name: Create Release
-        run: ghr -token ${{ secrets.GITHUB_TOKEN }} -name ${{ inputs.release-version }} ${{ inputs.draft-flag }} -replace ${{ inputs.release-version }} frameworks
+        run: |
+          PRERELEASE_FLAG=""
+          if [[ "${{ inputs.release-version }}" == *-* ]]; then
+            PRERELEASE_FLAG="-prerelease"
+          fi
+          ghr -token ${{ secrets.GITHUB_TOKEN }} -name ${{ inputs.release-version }} ${{ inputs.draft-flag }} $PRERELEASE_FLAG -replace ${{ inputs.release-version }} frameworks
